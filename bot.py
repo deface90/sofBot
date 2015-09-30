@@ -42,7 +42,7 @@ def run_bot():
     if last_update_id:
         updates = bot.getUpdates(offset=last_update_id+1)
     else:
-        updates = bot.getUpdates
+        updates = bot.getUpdates()
     print 'OK! fetched ' + str(len(updates)) + ' update(s)! Obtain response... '
 
     for upd in updates:
