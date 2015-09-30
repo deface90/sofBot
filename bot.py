@@ -1,13 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import telegram, stackexchange
+import telegram
+import stackexchange
 import MySQLdb
+import xml
 from settings import *
 
 bot = telegram.Bot(token=token)
 db = MySQLdb.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPassword, db=mysqlDBName, charset='utf8')
 cursor = db.cursor()
+
+
+def remove_tags(text):
+    return ''.join(xml.etree.ElementTree.fromstring(text).itertext())
 
 
 def obtain_question(q):
@@ -22,7 +28,7 @@ def obtain_question(q):
             result = {
                 'status': True,
                 'questionUrl': so_q.url,
-                'answer': answers[0].body
+                'answer': remove_tags(answers[0].body)
             }
 
     return result
