@@ -11,14 +11,19 @@ cursor = db.cursor()
 
 
 def obtain_question(q):
-    result = False
+    result = {'status': False}
     so = stackexchange.Site(stackexchange.StackOverflow)
+    so.be_inclusive()
     so_qs = so.search(intitle=q, sort='votes')[:1]
     for so_q in so_qs:
         print('%8d %s %s' % (so_q.id, so_q.title, so_q.url))
         answers = so.answers(question_id=so_q.id, sort='votes')[:1]
         if answers:
-            result = answers[0].body
+            result = {
+                'status': True,
+                'questionUrl': so_q.url,
+                'answer': answers[0].body
+            }
 
     return result
 
@@ -56,12 +61,19 @@ def run_bot():
             print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
 
         answer = obtain_question(question)
-        if answer:
-            message = answer
+        if answer['status']:
+            message = answer['answer']
         else:
             message = u'Ниче не нашёл :('
 
-        bot.sendMessage(chat_id=upd.message.chat.id, text=message)
+        try:
+            bot.sendMessage(chat_id=upd.message.chat.id, text=message)
+        except telegram.TelegramError:
+            if answer['status']:
+                msg = 'Слишком длинный ответ, ничерта не влезает, вот линк на вопрос - ' + answer['questionUrl']
+            else:
+                msg = 'Произошла хер знает какая ошибка, мож лимит запросов, может криворукий разработчик'
+            bot.sendMessage(chat_id=upd.message.chat.id, text=msg)
 
     db.close()
     print 'OK!'
