@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import telegram, stackexchange
 import MySQLdb
@@ -55,7 +56,7 @@ def run_bot():
         if answer:
             message = answer
         else:
-            message = 'Ниче не нашёл :('
+            message = u'Ниче не нашёл :('
 
         bot.sendMessage(chat_id=upd.message.chat.id, text=message)
 
