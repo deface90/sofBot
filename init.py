@@ -15,7 +15,7 @@ sql = """DROP TABLE IF EXISTS  messages;
          userId BIGINT(20) NOT NULL,
          content TEXT DEFAULT NULL,
          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         PRIMARY KEY (id)
+         PRIMARY KEY (id),
          KEY userId (userId),
          KEY updateId (updateId)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"""
