@@ -7,7 +7,7 @@ from settings import *
 db = MySQLdb.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPassword, db=mysqlDBName, charset='utf8')
 cursor = db.cursor()
 
-sql = """DROP TABLE messages;
+sql = """DROP TABLE IF EXISTS  messages;
       CREATE TABLE messages (
          id BIGINT(20) NOT NULL AUTO_INCREMENT,
          updateId BIGINT(20) NOT NULL,
@@ -15,7 +15,7 @@ sql = """DROP TABLE messages;
          userId BIGINT(20) NOT NULL,
          content TEXT DEFAULT NULL,
          createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         PRIMARY KEY (id),
+         PRIMARY KEY (id)
          KEY userId (userId),
          KEY updateId (updateId)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"""
