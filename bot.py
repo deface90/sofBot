@@ -39,7 +39,10 @@ def run_bot():
         last_update_id = None
 
     print 'Get telegram updates... '
-    updates = bot.getUpdates(offset=last_update_id+1)
+    if last_update_id:
+        updates = bot.getUpdates(offset=last_update_id+1)
+    else:
+        updates = bot.getUpdates
     print 'OK! fetched ' + str(len(updates)) + ' update(s)! Obtain response... '
 
     for upd in updates:
