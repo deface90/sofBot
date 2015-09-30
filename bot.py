@@ -4,7 +4,6 @@
 import telegram
 import stackexchange
 import MySQLdb
-import xml
 from settings import *
 
 bot = telegram.Bot(token=token)
@@ -12,8 +11,25 @@ db = MySQLdb.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPassword, db=my
 cursor = db.cursor()
 
 
-def remove_tags(text):
-    return ''.join(xml.etree.ElementTree.fromstring(text).itertext())
+from HTMLParser import HTMLParser
+
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+        
+    def handle_data(self, d):
+        self.fed.append(d)
+
+    def get_data(self):
+        return ''.join(self.fed)
+
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
 
 
 def obtain_question(q):
@@ -28,7 +44,7 @@ def obtain_question(q):
             result = {
                 'status': True,
                 'questionUrl': so_q.url,
-                'answer': remove_tags(answers[0].body)
+                'answer': strip_tags(answers[0].body)
             }
 
     return result
